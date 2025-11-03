@@ -1,15 +1,31 @@
+"use client"; // Marker som en Client Component
+
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 
-// Trin 2b: Læs variablen på serveren, når siden indlæses
-const myTestVariable = process.env.MIN_TEST_VARIABEL || "### VARIABEL MANGLER (undefined) ###";
-
 export default function Home() {
+  // Trin 3b: Brug 'useState' til at gemme hemmeligheden
+  const [myTestVariable, setMyTestVariable] = useState("Henter hemmelighed...");
+
+  // Trin 3c: Brug 'useEffect' til at hente hemmeligheden, når siden er klar
+  useEffect(() => {
+    fetch('/api/get-secret')
+      .then(res => res.json())
+      .then(data => {
+        setMyTestVariable(data.secret);
+      })
+      .catch(error => {
+        console.error("Kunne ikke hente hemmelighed:", error);
+        setMyTestVariable("### FEJL VED HENTNING ###");
+      });
+  }, []); // Tomt array betyder, at effekten kun kører én gang
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
 
       {/* --- VORES NYE TEST-SELE --- */}
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <h1 className="text-2xl font-bold">Trin 2: Test af Hemmelighed</h1>
+        <h1 className="text-2xl font-bold">Trin 3: Test af Hemmelighed (via API)</h1>
         <p 
           data-testid="secret-value" 
           className="border bg-gray-100 p-4"
